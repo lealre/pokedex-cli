@@ -5,28 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/lealre/pokedex-cli/commands"
 )
-
-type cliCommand struct {
-	name        string
-	description string
-	callback    func() error
-}
-
-func getCommands() map[string]cliCommand {
-	return map[string]cliCommand{
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
-		"help": {
-			name:        "help",
-			description: "Displays a help message",
-			callback:    commandHelp,
-		},
-	}
-}
 
 func main() {
 	for {
@@ -37,12 +18,12 @@ func main() {
 		inputUser := scanner.Text()
 		inputCleaned := cleanInput(inputUser)
 		if len(inputCleaned) == 0 {
-			getCommands()["exit"].callback()
+			commands.GetCommands()["exit"].Callback()
 		}
 		userCommand := inputCleaned[0]
 
-		if command, ok := getCommands()[userCommand]; ok {
-			command.callback()
+		if command, ok := commands.GetCommands()[userCommand]; ok {
+			command.Callback()
 			continue
 		}
 
@@ -56,21 +37,4 @@ func cleanInput(text string) []string {
 		splited[i] = strings.ToLower(word)
 	}
 	return splited
-}
-
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp() error {
-	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
-
-	for key, cmd := range getCommands() {
-		fmt.Printf("%s: %s\n", key, cmd.description)
-	}
-	return nil
 }
