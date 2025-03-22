@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,13 +15,19 @@ func commandMapBack(config *Config) error {
 
 	previousUrl := config.Previous
 
+	if value, ok := config.Cache.Get(previousUrl); ok {
+		fmt.Printf("Using cahce for %s\n", previousUrl)
+		return printLocations(value, config)
+	}
+
 	// Request
 	res, err := http.Get(previousUrl)
 	if err != nil {
-		return fmt.Errorf("error occurred while requesting %s: %w", previousUrl, err)
+		return fmt.Errorf("error occurred: %w", err)
 	}
 	body, err := io.ReadAll(res.Body)
 	defer res.Body.Close()
+
 	if res.StatusCode > 299 {
 		return fmt.Errorf("response failed with status code: %d and\nbody: %s", res.StatusCode, body)
 	}
@@ -30,23 +35,8 @@ func commandMapBack(config *Config) error {
 		return fmt.Errorf("error occurred: %w", err)
 	}
 
-	// Unmarshall
-	var results Results
-	err = json.Unmarshal(body, &results)
-	if err != nil {
-		fmt.Println(err)
-	}
+	// Add cache
+	config.Cache.Add(previousUrl, body)
 
-	for _, result := range results.Results {
-		fmt.Printf("%s\n", result.Name)
-	}
-
-	config.Next = results.Next
-	if results.Previous != nil {
-		config.Previous = *results.Previous
-	} else {
-		config.Previous = ""
-	}
-
-	return nil
+	return printLocations(body, config)
 }

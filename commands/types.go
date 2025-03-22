@@ -1,5 +1,7 @@
 package commands
 
+import "github.com/lealre/pokedex-cli/pokecache"
+
 type CliCommand struct {
 	Name        string
 	Description string
@@ -10,6 +12,7 @@ type CliCommand struct {
 type Config struct {
 	Next     string
 	Previous string
+	Cache    *pokecache.Cache
 }
 
 type Location struct {

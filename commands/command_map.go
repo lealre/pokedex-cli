@@ -17,6 +17,11 @@ func commandMap(config *Config) error {
 		url = config.Next
 	}
 
+	if value, ok := config.Cache.Get(url); ok {
+		fmt.Printf("Using cahce for %s\n", url)
+		return printLocations(value, config)
+	}
+
 	// Request
 	res, err := http.Get(url)
 	if err != nil {
@@ -24,6 +29,7 @@ func commandMap(config *Config) error {
 	}
 	body, err := io.ReadAll(res.Body)
 	defer res.Body.Close()
+
 	if res.StatusCode > 299 {
 		return fmt.Errorf("response failed with status code: %d and\nbody: %s", res.StatusCode, body)
 	}
@@ -31,11 +37,18 @@ func commandMap(config *Config) error {
 		return fmt.Errorf("error occurred: %w", err)
 	}
 
-	// Unmarshall
+	// Add cache
+	config.Cache.Add(url, body)
+
+	return printLocations(body, config)
+}
+
+// Processes a byte slice representing JSON data
+func printLocations(val []byte, config *Config) error {
 	var results Results
-	err = json.Unmarshal(body, &results)
+	err := json.Unmarshal(val, &results)
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("error occurred: %w", err)
 	}
 
 	for _, result := range results.Results {

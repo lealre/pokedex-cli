@@ -7,11 +7,13 @@ import (
 	"strings"
 
 	"github.com/lealre/pokedex-cli/commands"
+	"github.com/lealre/pokedex-cli/pokecache"
 )
 
 func main() {
 
-	config := &commands.Config{}
+	cache := &pokecache.Cache{Cache: make(map[string]pokecache.CacheEntry)}
+	config := &commands.Config{Cache: cache}
 	cmds := commands.GetCommands(config)
 
 	for {
