@@ -10,6 +10,10 @@ import (
 )
 
 func main() {
+
+	config := &commands.Config{}
+	cmds := commands.GetCommands(config)
+
 	for {
 		fmt.Print("Pokedex > ")
 		scanner := bufio.NewScanner(os.Stdin)
@@ -18,11 +22,11 @@ func main() {
 		inputUser := scanner.Text()
 		inputCleaned := cleanInput(inputUser)
 		if len(inputCleaned) == 0 {
-			commands.GetCommands()["exit"].Callback()
+			cmds["exit"].Callback()
 		}
 		userCommand := inputCleaned[0]
 
-		if command, ok := commands.GetCommands()[userCommand]; ok {
+		if command, ok := cmds[userCommand]; ok {
 			command.Callback()
 			continue
 		}
