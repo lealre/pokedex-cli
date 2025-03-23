@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/lealre/pokedex-cli/commands"
 	"github.com/lealre/pokedex-cli/pokecache"
@@ -12,12 +13,15 @@ import (
 
 func main() {
 
-	cache := &pokecache.Cache{Cache: make(map[string]pokecache.CacheEntry)}
+	// Set in-memory cache cleaning interval
+	var cacheInterval time.Duration = 10
+	cache := pokecache.NewCache(time.Second * cacheInterval)
+
 	config := &commands.Config{Cache: cache}
 	cmds := commands.GetCommands(config)
 
 	for {
-		fmt.Print("Pokedex > ")
+		fmt.Print("\nPokedex > ")
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
 
