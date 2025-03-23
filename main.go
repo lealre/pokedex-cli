@@ -28,12 +28,17 @@ func main() {
 		inputUser := scanner.Text()
 		inputCleaned := cleanInput(inputUser)
 		if len(inputCleaned) == 0 {
-			cmds["exit"].Callback()
+			cmds["exit"].Callback("")
 		}
-		userCommand := inputCleaned[0]
+		baseCommand := inputCleaned[0]
 
-		if command, ok := cmds[userCommand]; ok {
-			command.Callback()
+		var argument string
+		if len(inputCleaned) > 1 {
+			argument = inputCleaned[1]
+		}
+
+		if command, ok := cmds[baseCommand]; ok {
+			command.Callback(argument)
 			continue
 		}
 

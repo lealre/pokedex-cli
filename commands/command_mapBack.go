@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func commandMapBack(config *Config) error {
+func commandMapBack(_ string, config *Config) error {
 
 	if config.Previous == "" {
 		fmt.Println("you're on the first page")
