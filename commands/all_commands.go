@@ -29,7 +29,7 @@ func GetCommands(config *Config) map[string]CliCommand {
 		"explore": {
 			Name:        "explore",
 			Description: "List all the Pokémon located in specific area",
-			Callback:    func(arg string) error { return commandMapBack(arg, config) },
+			Callback:    func(arg string) error { return commandExplore(arg, config) },
 			Config:      config,
 		},
 	}

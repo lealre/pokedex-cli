@@ -11,6 +11,11 @@ func commandExplore(location string, config *Config) error {
 	url := "https://pokeapi.co/api/v2/location-area/"
 	fullUrl := url + location
 
+	if value, ok := config.Cache.Get(url); ok {
+		fmt.Printf("Using cahce for %s\n", url)
+		return printPokemons(value, location)
+	}
+
 	// Request
 	res, err := http.Get(fullUrl)
 	if err != nil {
@@ -26,13 +31,25 @@ func commandExplore(location string, config *Config) error {
 		return fmt.Errorf("error occurred reading the response body: %w", err)
 	}
 
-	var PokemonEncounters PokemonEncounters
-	err = json.Unmarshal(body, &PokemonEncounters)
+	config.Cache.Add(url, body)
+
+	return printPokemons(body, location)
+}
+
+func printPokemons(val []byte, location string) error {
+
+	var pokemonEncounters PokemonEncounters
+	err := json.Unmarshal(val, &pokemonEncounters)
 	if err != nil {
 		return fmt.Errorf("error occurred unmarshalling the response body: %w", err)
 	}
 
-	// Keep from here
+	fmt.Printf("Exploring %s\n", location)
+	fmt.Println("Found Pokemon:")
+	for _, pokemon := range pokemonEncounters.PokemonEncounters {
+		fmt.Printf(" - %s\n", pokemon.Pokemon.Name)
+	}
 
 	return nil
+
 }
