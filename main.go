@@ -38,7 +38,10 @@ func main() {
 		}
 
 		if command, ok := cmds[baseCommand]; ok {
-			command.Callback(argument)
+			err := command.Callback(argument)
+			if err != nil {
+				fmt.Println(err)
+			}
 			continue
 		}
 
