@@ -32,5 +32,11 @@ func GetCommands(config *Config) map[string]CliCommand {
 			Callback:    func(arg string) error { return commandExplore(arg, config) },
 			Config:      config,
 		},
+		"catch": {
+			Name:        "catch",
+			Description: "Try to catch a Pokemon",
+			Callback:    func(arg string) error { return catchPokemon(arg, config) },
+			Config:      config,
+		},
 	}
 }
