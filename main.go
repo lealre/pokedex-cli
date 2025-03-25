@@ -14,7 +14,7 @@ import (
 func main() {
 
 	// Set in-memory cache cleaning interval
-	var cacheInterval time.Duration = 10
+	var cacheInterval time.Duration = 60
 	cache := pokecache.NewCache(time.Second * cacheInterval)
 
 	config := &commands.Config{Cache: cache}
