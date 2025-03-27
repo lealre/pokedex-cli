@@ -1,6 +1,6 @@
 package commands
 
-func GetCommands(config *Config) map[string]CliCommand {
+func GetCommands(config *Config, storage *Storage) map[string]CliCommand {
 	return map[string]CliCommand{
 		"exit": {
 			Name:        "exit",
@@ -35,7 +35,13 @@ func GetCommands(config *Config) map[string]CliCommand {
 		"catch": {
 			Name:        "catch",
 			Description: "Try to catch a Pokemon",
-			Callback:    func(arg string) error { return catchPokemon(arg, config) },
+			Callback:    func(arg string) error { return commandCatch(arg, config, storage) },
+			Config:      config,
+		},
+		"inspect": {
+			Name:        "inspect",
+			Description: "Check the stats of a Pokemon",
+			Callback:    func(arg string) error { return commandInspect(arg, storage) },
 			Config:      config,
 		},
 	}

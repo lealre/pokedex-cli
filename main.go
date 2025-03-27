@@ -18,7 +18,8 @@ func main() {
 	cache := pokecache.NewCache(time.Second * cacheInterval)
 
 	config := &commands.Config{Cache: cache}
-	cmds := commands.GetCommands(config)
+	storage := &commands.Storage{Storage: make(map[string]commands.PokemonExperience)}
+	cmds := commands.GetCommands(config, storage)
 
 	for {
 		fmt.Print("\nPokedex > ")

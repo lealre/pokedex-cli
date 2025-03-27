@@ -8,19 +8,21 @@ import (
 	"net/http"
 )
 
-// url = https://pokeapi.co/api/v2/pokemon/{id or name}/
-
-func catchPokemon(pokemon string, config *Config) error {
+func commandCatch(pokemon string, config *Config, storage *Storage) error {
 
 	url := "https://pokeapi.co/api/v2/pokemon/"
 	fullUrl := url + pokemon
 
-	if value, ok := config.Cache.Get(fullUrl); ok {
-		fmt.Printf("Using cahce for %s\n", fullUrl)
-		return trhowPokeball(value, pokemon)
+	if _, hasPokemon := storage.Storage[pokemon]; hasPokemon {
+		fmt.Print("You already caught that Pokemon!")
+		return nil
 	}
 
-	// Request
+	if value, ok := config.Cache.Get(fullUrl); ok {
+		fmt.Printf("Using cahce for %s\n", fullUrl)
+		return trhowPokeball(value, pokemon, storage)
+	}
+
 	res, err := http.Get(fullUrl)
 	if err != nil {
 		return fmt.Errorf("error occurred: %w", err)
@@ -42,11 +44,11 @@ func catchPokemon(pokemon string, config *Config) error {
 
 	config.Cache.Add(url, body)
 
-	return trhowPokeball(body, pokemon)
+	return trhowPokeball(body, pokemon, storage)
 
 }
 
-func trhowPokeball(val []byte, pokemon string) error {
+func trhowPokeball(val []byte, pokemon string, storage *Storage) error {
 	maxExp := 608
 
 	var pokemonExperience PokemonExperience
@@ -62,6 +64,7 @@ func trhowPokeball(val []byte, pokemon string) error {
 
 	if isCaptured {
 		fmt.Printf("%s was caught!\n", pokemon)
+		storage.Storage[pokemon] = pokemonExperience
 		return nil
 	}
 
