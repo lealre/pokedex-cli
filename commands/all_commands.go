@@ -44,5 +44,11 @@ func GetCommands(config *Config, storage *Storage) map[string]CliCommand {
 			Callback:    func(arg string) error { return commandInspect(arg, storage) },
 			Config:      config,
 		},
+		"pokedex": {
+			Name:        "pokedex",
+			Description: "List all your pokemons",
+			Callback:    func(arg string) error { return commandPokedex(arg, storage) },
+			Config:      config,
+		},
 	}
 }
